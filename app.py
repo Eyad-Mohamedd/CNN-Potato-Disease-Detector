@@ -2,15 +2,28 @@ import streamlit as st
 import tensorflow as tf
 from PIL import Image
 import numpy as np
+import gdown
+import os
 
-# Load Model
-model = tf.keras.models.load_model(r"D:\CNN-Potato-Disease\My-App\model.h5")
+# ================================
+# Download & Load Model
+# ================================
+drive_url = "https://drive.google.com/uc?id=1VBJQfzBe3DPrYT2HHzuzmVVzolGo2Bai"  # Google Drive link
+model_path = "model.h5"
+
+if not os.path.exists(model_path):
+    with st.spinner("⬇️ Downloading model, please wait..."):
+        gdown.download(drive_url, model_path, quiet=False)
+
+# Load model
+model = tf.keras.models.load_model(model_path)
 class_names = ['Early Blight', 'Late Blight', 'Healthy']
 
-# Page Config
+# ================================
+# Page Config & Styling
+# ================================
 st.set_page_config(page_title="Potato Disease Detector", page_icon="🥔", layout="centered")
 
-# Background Image CSS
 background_url = "https://images.pexels.com/photos/4750270/pexels-photo-4750270.jpeg"
 st.markdown(f"""
     <style>
@@ -54,11 +67,15 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
+# ================================
 # Title
+# ================================
 st.markdown("<h1>🥔 Potato Disease Detector</h1>", unsafe_allow_html=True)
 st.write("---")
 
+# ================================
 # Upload Section
+# ================================
 st.markdown('<div class="choose-text">📷 Choose an Image to Predict:</div>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
@@ -69,15 +86,18 @@ if uploaded_file is not None:
     with col2:
         st.image(image, caption='Uploaded Image', width=300)
 
+    # Preprocess image
     img = image.resize((256, 256))
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)
 
+    # Prediction
     with st.spinner('🔍 Analyzing the image...'):
         prediction = model.predict(img_array)
         predicted_class = class_names[np.argmax(prediction[0])]
         confidence = round(100 * (np.max(prediction[0])), 2)
 
+    # Results
     st.write("---")
     st.markdown(f"<h3 style='text-align: center; color: #1b5e20;'>Prediction Results</h3>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
