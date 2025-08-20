@@ -8,7 +8,7 @@ import os
 # ================================
 # Download & Load Model
 # ================================
-drive_url = "https://drive.google.com/uc?id=1VBJQfzBe3DPrYT2HHzuzmVVzolGo2Bai"  # Google Drive link
+drive_url = "https://drive.google.com/file/d/1QhXBLxWCHM_N7ko3iF5yosFnnC1yCtWj/view?usp=sharing"  # Google Drive link
 model_path = "model.h5"
 
 if not os.path.exists(model_path):
@@ -112,3 +112,4 @@ else:
 
 st.write("---")
 st.markdown("<div class='footer'>Developed by Eyad 🚀</div>", unsafe_allow_html=True)
+
